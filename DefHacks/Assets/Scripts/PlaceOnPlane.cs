@@ -30,12 +30,12 @@ public class PlaceOnPlane : MonoBehaviour
     /// The object instantiated as a result of a successful raycast intersection with a plane.
     /// </summary>
     public GameObject spawnedObject { get; private set; }
-
+    private List<GameObject> gameObjects = new List<GameObject>();
     void Awake()
     {
         m_RaycastManager = GetComponent<ARRaycastManager>();
     }
-
+    int nameNum = 1;
     void Update()
     {
         if (Input.touchCount <= 0)
@@ -71,17 +71,73 @@ public class PlaceOnPlane : MonoBehaviour
                 // Raycast hits are sorted by distance, so the first one
                 // will be the closest hit.
                 var hitPose = s_Hits[0].pose;
-
+                
                 if (spawnedObject == null)
                 {
                     spawnedObject = Instantiate(m_PlacedPrefab, hitPose.position, hitPose.rotation);
+                    spawnedObject.active = true;
+                    spawnedObject.name = nameNum.ToString();
+                    nameNum+=1;
+                    gameObjects.Add(spawnedObject);
                 }
                 else
                 {
                     spawnedObject.transform.position = hitPose.position;
                 }
+                
             }
         }
+    }
+
+    Vector3 moveUnit = new Vector3(0, 1, 0);
+    public void UpPosition() {
+        if(gameObjects.Count > 0) {
+            last = gameObjects[gameObjects.Count - 1];
+            last.transform.position += moveUnit;
+            spawnedObject.transform.position += moveUnit;
+        }
+        last = GameObject.Find((nameNum-1).ToString());
+        last.transform.position += moveUnit;
+                GameObject.Find("Road_Curved_01.obj").active = false;
+        GameObject.Find("CUPIC_ROAD.obj").active = false;
+    }
+
+    public void DownPosition() {
+        if(gameObjects.Count > 0) {
+            last = gameObjects[gameObjects.Count - 1];
+            last.transform.position -= moveUnit;
+            spawnedObject.transform.position -= moveUnit;
+        }
+        last = GameObject.Find((nameNum-1).ToString());
+        last.transform.position -= moveUnit;
+        GameObject.Find("Road_Curved_01.obj").active = false;
+        GameObject.Find("CUPIC_ROAD.obj").active = false;
+    }
+
+    GameObject last;
+    public void IncreaseSize() {
+        
+        if(gameObjects.Count > 0) {
+            last = gameObjects[gameObjects.Count - 1];
+            last.transform.localScale *= 1.5f;
+            spawnedObject.transform.localScale *= 1.5f;
+        }
+        last = GameObject.Find((nameNum-1).ToString());
+        last.transform.localScale *= 1.5f;
+        GameObject.Find("Road_Curved_01.obj").active = false;
+        GameObject.Find("CUPIC_ROAD.obj").active = false;
+    }
+
+    public void DecreaseSize() {
+        if(gameObjects.Count > 0) {
+            last = gameObjects[gameObjects.Count - 1];
+            last.transform.localScale *= .5f;
+            spawnedObject.transform.localScale *= .5f;
+        }
+        last = GameObject.Find((nameNum-1).ToString());
+        last.transform.localScale *= .5f;
+        GameObject.Find("Road_Curved_01.obj").active = false;
+        GameObject.Find("CUPIC_ROAD.obj").active = false;
     }
 
     static List<ARRaycastHit> s_Hits = new List<ARRaycastHit>();
