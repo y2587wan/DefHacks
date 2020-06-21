@@ -74,7 +74,8 @@ public class PlaceOnPlane : MonoBehaviour
                 
                 if (spawnedObject == null)
                 {
-                    spawnedObject = Instantiate(m_PlacedPrefab, hitPose.position, hitPose.rotation);
+                    Vector3 position = new Vector3(hitPose.position.x, 0, hitPose.position.z);
+                    spawnedObject = Instantiate(m_PlacedPrefab, position, hitPose.rotation);
                     spawnedObject.active = true;
                     spawnedObject.name = nameNum.ToString();
                     nameNum+=1;
